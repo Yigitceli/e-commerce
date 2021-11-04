@@ -34,7 +34,8 @@ const Right = styled.div`
 
 const AnnouncmentContainer = styled.div`
   background-color: tomato;
-  padding: 10px;
+  padding: 6px;
+  font-size: 14px;
   justify-content: center;
   display: flex;
 `;
