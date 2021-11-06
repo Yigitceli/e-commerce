@@ -6,7 +6,7 @@ import { sliderItems } from "../data";
 const Container = styled.div`
   background-color: "#f5fafd";
   width: 100%;
-  height: 100vh;
+  height: 80vh;
   display: flex;
   align-items: center;
   position: relative;
@@ -16,6 +16,7 @@ const Container = styled.div`
 const Wrapper = styled.div`
   height: 100%;
   display: flex;
+  align-items: center;  
 `;
 const ImageContainer = styled.div`
   height: 100%;
@@ -23,7 +24,7 @@ const ImageContainer = styled.div`
 `;
 
 const Image = styled.img`
-  height: 80%;
+  height: 100%;
 `;
 
 const InfoContainer = styled.div`
@@ -35,7 +36,7 @@ const InfoContainer = styled.div`
 const Slide = styled.div`
   display: flex;
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   transition: all 0.7s linear;
   transform: translateX(${(props) => props.slideIndex * "-100"}vw);
   background-color: #${(props) => props.bg};

@@ -70,7 +70,11 @@ const AuthItem = styled.span`
   margin-left: ${(props) => (props.first ? "0px" : "30px")};
   cursor: pointer;
 `;
+
+
 const Lang = styled.span``;
+
+
 export default function Navbar(props) {
   return (
     <Container>
@@ -91,7 +95,7 @@ export default function Navbar(props) {
           <AuthItem>REGISTER</AuthItem>
           <AuthItem>
             <Badge badgeContent={4} color="secondary">
-              <ShoppingCart style={{ color: "tomato" }} />
+              <ShoppingCart style={{ color: "tomato" }} />              
             </Badge>
           </AuthItem>
         </Right>
