@@ -6,7 +6,7 @@ import { sliderItems } from "../data";
 const Container = styled.div`
   background-color: "#f5fafd";
   width: 100%;
-  height: 80vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   position: relative;
@@ -24,7 +24,7 @@ const ImageContainer = styled.div`
 `;
 
 const Image = styled.img`
-  height: 100%;
+  height: 80%;
 `;
 
 const InfoContainer = styled.div`
