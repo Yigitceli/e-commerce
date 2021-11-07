@@ -78,7 +78,7 @@ const Icon = styled.div`
   }
 `;
 
-export default function PopularProductItem({ data }) {
+export default function ProductItem({ data }) {
   return (
     <Wrapper>
       <ProductImg src={data.img} />
