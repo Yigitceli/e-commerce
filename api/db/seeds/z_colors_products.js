@@ -14,7 +14,7 @@ exports.seed = function (knex) {
 
   const fakeRelation = [];
 
-  for (let i = 1; i <= 30; i++) {
+  for (let i = 1; i <= 20; i++) {
     const randomNumber = Math.ceil(Math.random() * 3);
     for (let k = 0; k < randomNumber; k++) {
       fakeRelation.push(createFakeColorRelation(i));

@@ -1,19 +1,22 @@
 const faker = require("faker");
+const axios = require("axios");
 
-const createFakeProduct = () => ({
-  title: faker.commerce.productName(),
-  description: faker.commerce.productDescription(),  
-  price: faker.commerce.price(),
-  image: faker.image.imageUrl(),
-});
+const createFakeProduct = async () => {
+  const { data } = await axios.get("https://fakestoreapi.com/products");
+  return data;
+};
 
 exports.seed = function (knex) {
   // Deletes ALL existing entries
-  const fakeProducts = [];
-  const desiredFakes = 30;
+  return knex("products")
+    .del()
+    .then(async function () {
+      const data = await createFakeProduct();      
+      const final = data.map((item) => {
+        const { rating, ...info } = item;        
+        return info;
+      });
 
-  for (let index = 0; index < desiredFakes; index++) {
-    fakeProducts.push(createFakeProduct());
-  }
-  return knex("products").insert(fakeProducts);
+      return knex("products").insert(final);
+    });
 };

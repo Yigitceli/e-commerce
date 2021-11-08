@@ -9,13 +9,16 @@ const createFakeUser = () => ({
 
 exports.seed = function (knex) {
   // Deletes ALL existing entries
+  return knex("users")
+    .del()
+    .then(function () {
+      const fakeUsers = [];
+      const desiredFakes = 20;
 
-  const fakeUsers = [];
-  const desiredFakes = 20;
+      for (let index = 0; index < desiredFakes; index++) {
+        fakeUsers.push(createFakeUser());
+      }
 
-  for (let index = 0; index < desiredFakes; index++) {
-    fakeUsers.push(createFakeUser());
-  }
-
-  return knex("users").insert(fakeUsers);
+      return knex("users").insert(fakeUsers);
+    });
 };

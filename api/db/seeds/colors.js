@@ -5,11 +5,15 @@ const createFakeColor = () => ({
 });
 exports.seed = function (knex) {
   // Deletes ALL existing entries
-  const fakeColors = [];
-  const desiredColors = 10;
-  // Inserts seed entries
-  for (let index = 0; index < desiredColors; index++) {
-    fakeColors.push(createFakeColor());
-  }
-  return knex("colors").insert(fakeColors);
+  return knex("colors")
+    .del()
+    .then(function () {
+      const fakeColors = [];
+      const desiredColors = 10;
+      // Inserts seed entries
+      for (let index = 0; index < desiredColors; index++) {
+        fakeColors.push(createFakeColor());
+      }
+      return knex("colors").insert(fakeColors);
+    });
 };
