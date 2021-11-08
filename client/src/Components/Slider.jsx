@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { ArrowLeft, ArrowRight } from "@material-ui/icons";
 import { sliderItems } from "../data";
+import { middle } from "../responsive";
 
 const Container = styled.div`
   background-color: "#f5fafd";
@@ -11,12 +12,13 @@ const Container = styled.div`
   align-items: center;
   position: relative;
   overflow: hidden;
+  ${middle({ display: "none" })}
 `;
 
 const Wrapper = styled.div`
   height: 100%;
   display: flex;
-  align-items: center;  
+  align-items: center;
 `;
 const ImageContainer = styled.div`
   height: 100%;

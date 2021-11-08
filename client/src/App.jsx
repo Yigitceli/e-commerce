@@ -6,17 +6,20 @@ import PopularProducts from "./Components/Products";
 import Slider from "./Components/Slider";
 import Login from "./Pages/Login";
 import Product from "./Pages/Product";
-import Products from "./Pages/ProductList";
+
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Register from "./Pages/Register";
 import Cart from "./Pages/Cart";
+import Products from "./Components/Products";
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Navbar />
-        <Cart />
+        <Slider />
+        <Categories />
+        <Products />
         <Newsletter />
         <Footer />
       </div>

@@ -1,25 +1,20 @@
 import React from "react";
 import styled from "styled-components";
+import { middle } from "../responsive";
 
 const Wrapper = styled.div`
   flex: 1;
   position: relative;
   margin: 0px 3px;
-`;
-
-const ImageContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  ${middle({ margin: "3px 0" })}
+  overflow:hidden;
 `;
 
 const Image = styled.img`
   width: 100%;
-  height: 100%;
+  height: 70%;
   object-fit: cover;
+  ${middle({ height: "40vh" })}
 `;
 
 const ContentWrapper = styled.div`
@@ -36,6 +31,8 @@ const ContentWrapper = styled.div`
 const Title = styled.h4`
   font-size: 36px;
   color: white;
+  margin: 0;
+  margin-bottom: 20px;
 `;
 
 const Button = styled.button`
@@ -50,9 +47,8 @@ const Button = styled.button`
 export default function CategoryItem({ data }) {
   return (
     <Wrapper>
-      <ImageContainer>
-        <Image src={data.img} />
-      </ImageContainer>
+      <Image src={data.img} />
+
       <ContentWrapper>
         <Title>{data.title}</Title>
         <Button>SHOP NOW</Button>

@@ -2,12 +2,14 @@ import React from "react";
 import styled from "styled-components";
 import { categories } from "../data";
 import CategoryItem from "./CategoryItem";
+import { middle } from "../responsive";
 
 const Container = styled.div`
   padding: 15px;
-  height: 75vh;
+  min-height: 75vh;
   width: 100%;
   display: flex;
+  ${middle({ flexDirection: "column", padding: 0 })}
 `;
 
 export default function Categories() {

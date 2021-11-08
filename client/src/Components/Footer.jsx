@@ -9,15 +9,21 @@ import {
   Room,
   Twitter,
 } from "@material-ui/icons";
+import { middle, mobile } from "../responsive";
 
 const Container = styled.div`
   display: flex;
+  width: 100vw;
+  padding: 10px;
+  ${middle({ flexDirection: "column" })}
 `;
 const Left = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 20px;
+  ${middle({ padding: "0px" })}
+  ${middle({ marginBottom: "20px" })}
 `;
 const Middle = styled.div`
   display: flex;
@@ -25,10 +31,14 @@ const Middle = styled.div`
   flex: 1;
   height: 100%;
   padding: 20px;
+  ${middle({ padding: "0px" })}
+  ${middle({ marginBottom: "20px" })}
 `;
 const Right = styled.div`
   flex: 1;
   padding: 20px;
+  ${middle({ padding: "0px" })}
+  ${middle({ marginBottom: "20px" })}
 `;
 
 const Logo = styled.h2`

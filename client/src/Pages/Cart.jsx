@@ -1,23 +1,30 @@
+import { Add, Remove } from "@material-ui/icons";
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import CartItem from "../Components/CartItem";
+import { popularProducts } from "../data";
+import { middle, mobile } from "../responsive";
 
 const Container = styled.div`
-  height: 75vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  ${middle({ padding: "0" })}
 `;
 
 const Title = styled.h1`
   font-weight: 300;
+  margin: 0;
 `;
 
 const TopWrapper = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
+  padding: 20px;
+  ${middle({ padding: "5px;" })}
 `;
 
 const Button = styled.button`
@@ -31,17 +38,18 @@ const LinkGroup = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  ${middle({ display: "none" })}
 `;
 
 const MiddleWrapper = styled.div`
   width: 100%;
   display: flex;
   height: 100%;
+  ${middle({ flexDirection: "column" })}
 `;
 
 const Left = styled.div`
-  border-top: 1px solid #eeeeee;
-  flex: 5;
+  flex: 6;
 `;
 
 const Right = styled.div`
@@ -49,19 +57,33 @@ const Right = styled.div`
   height: 100%;
   border: 1px solid lightgray;
   border-radius: 10px;
+  padding: 20px;
+  min-height: 55vh;
 `;
 
 const Menu = styled.div`
   display: flex;
+  flex-wrap: wrap;
 `;
 
-const MenuItem = styled.div``;
+const MenuItem = styled.div`
+  display: flex;
+  padding: 0 0 30px 0;
+  width: 100%;
+  justify-content: space-between;
+  font-size: ${(props) => props.total && "24px"};
+  font-weight: ${(props) => props.total && 500};
+`;
 
 const Description = styled.span``;
 
 const Price = styled.span``;
 
-const ButtonCheckout = styled.button``;
+const Hr = styled.hr`
+  background-color: #eee;
+  border: none;
+  height: 1px;
+`;
 
 export default function Cart() {
   return (
@@ -74,15 +96,18 @@ export default function Cart() {
             Shopping Bag(2)
           </Link>
           <Link style={{ margin: "0px 10px" }} to="#">
-            Your Wishlist
+            Your Wishlist(0)
           </Link>
         </LinkGroup>
         <Button right>CHECKOUT NOW</Button>
       </TopWrapper>
       <MiddleWrapper>
-        <Left></Left>
+        <Left>
+          <CartItem />
+          <Hr />
+        </Left>
         <Right>
-          <Title>ORDER SUMMARY</Title>
+          <Title style={{ paddingBottom: "30px" }}>ORDER SUMMARY</Title>
           <Menu>
             <MenuItem>
               <Description>Subtotal</Description>
@@ -96,13 +121,13 @@ export default function Cart() {
               <Description>Shipping Discount</Description>
               <Price>$ -5.90</Price>
             </MenuItem>
-            <MenuItem>
+            <MenuItem total>
               <Description>Total</Description>
               <Price>$ 0</Price>
             </MenuItem>
           </Menu>
           <Button right style={{ width: "100%" }}>
-            CHECK OUT
+            CHECKOUT NOW
           </Button>
         </Right>
       </MiddleWrapper>
