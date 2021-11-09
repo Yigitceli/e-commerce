@@ -1,30 +1,29 @@
-const createFakeColorRelation = (index) => {
-  const color = Math.ceil(Math.random() * 3);
+const createFakeSizeRelation = (index) => {
+  const size = Math.ceil(Math.random() * 5);
 
   const result = {
-    color_id: color,
+    size_id: size,
     product_id: index,
   };
 
   return result;
 };
 
+
 exports.seed = function (knex) {
   // Deletes ALL existing entries
-
-  const fakeRelation = [];
+  return knex("sizes_products")
+    .del()
+    .then(function () {
+      const fakeRelation = [];
 
   for (let i = 1; i <= 20; i++) {
     const randomNumber = Math.ceil(Math.random() * 3);
     for (let k = 0; k < randomNumber; k++) {
-      fakeRelation.push(createFakeColorRelation(i));
+      fakeRelation.push(createFakeSizeRelation(i));
     }
   }
-
-  return knex("colors_products")
-    .del()
-    .then(function () {
       // Inserts seed entries
-      return knex("colors_products").insert(fakeRelation);
+      return knex("sizes_products").insert(fakeRelation);
     });
 };

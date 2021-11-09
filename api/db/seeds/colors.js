@@ -9,7 +9,7 @@ exports.seed = function (knex) {
     .del()
     .then(function () {
       const fakeColors = [];
-      const desiredColors = 10;
+      const desiredColors = 3;
       // Inserts seed entries
       for (let index = 0; index < desiredColors; index++) {
         fakeColors.push(createFakeColor());
