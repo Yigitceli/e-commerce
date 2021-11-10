@@ -5,4 +5,4 @@ const softDelete = require("objection-soft-delete");
 
 Model.knex(Knex);
 
-module.exports(Model);
+module.exports = Model;
