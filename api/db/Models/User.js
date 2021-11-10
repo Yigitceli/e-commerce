@@ -1,16 +1,14 @@
-const Model = require("../db");
-const softDelete = require('objection-soft-delete');
+const { Model } = require("objection");
+const Knex = require("../db");
+const softDelete = require("objection-soft-delete");
 
+Model.knex(Knex);
 
-class User extends softDelete({ columnName: "deleted" })(Model) {
+class User extends Model {
   // Table name is the only required property.
 
   static get tableName() {
     return "users";
-  }
-
-  static get id() {
-    return "id";
   }
 
   fullName() {
@@ -32,7 +30,17 @@ class User extends softDelete({ columnName: "deleted" })(Model) {
     };
   }
   static get relationMappings() {
-    return {};
+    const Cart = require("./Cart");
+    return {
+      owner: {
+        relation: Model.HasManyRelation,
+        modelClass: Cart,
+        join: {
+          from: "user.id",
+          to: "cart.user_id",
+        },
+      },
+    };
   }
 }
 module.exports = User;
