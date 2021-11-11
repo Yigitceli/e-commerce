@@ -36,8 +36,8 @@ class User extends Model {
         relation: Model.HasManyRelation,
         modelClass: Cart,
         join: {
-          from: "user.id",
-          to: "cart.user_id",
+          from: "users.id",
+          to: "carts.user_id",
         },
       },
     };

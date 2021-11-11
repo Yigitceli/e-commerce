@@ -15,9 +15,15 @@ exports.seed = function (knex) {
   const fakeRelation = [];
 
   for (let i = 1; i <= 20; i++) {
-    const randomNumber = Math.ceil(Math.random() * 3);
+    const randomNumber = Math.ceil(Math.random() * 4);
     for (let k = 0; k < randomNumber; k++) {
-      fakeRelation.push(createFakeColorRelation(i));
+      const relation = createFakeColorRelation(i);
+      !fakeRelation.some((item) => {
+        return (
+          item.color_id === relation.color_id &&
+          item.product_id === relation.product_id
+        );
+      }) && fakeRelation.push(relation);
     }
   }
 
