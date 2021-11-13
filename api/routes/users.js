@@ -9,9 +9,7 @@ require("dotenv").config();
 /* GET users listing. */
 
 router.get("/logout", LOGOUT);
-router.get("/test", authenticateToken, (req, res) => {
-  res.send(req.user);
-});
+router.get("/test", authenticateToken);
 
 router.post("/login", LOGIN);
 router.post("/token", TOKEN);

@@ -1,87 +1,71 @@
 var jwt = require("jsonwebtoken");
+const { token } = require("morgan");
 const User = require("../db/Models/User");
 require("dotenv").config();
 
 let refreshTokens = [];
 
 const generateAccessToken = (user) => {
-  const token = jwt.sign(user, process.env.SECRET, { expiresIn: "10s" });
+ 
 
-  return token;
 };
 
 /******************* LOGIN SECTION STARTS ****************/
 
 const LOGIN = async (req, res) => {
+  const { email, passwordData } = req.body;
   try {
-    let { username, passwordBody } = req.body;
-
-    (!username || !passwordBody) &&
-      res.status(402).json({
-        message: "Invalid input.",
-        succes: false,
+    !(email && !passwordData) &&
+      res.json({
+        msg: "Invalid Input",
+        success: false,
       });
-
-    const user = await User.query()
-      .select()
-      .where("username", username)
-      .first();
-
+    const user = await User.query().select("*").where("email", email).first();
     !user &&
-      res.status(404).json({
-        message: "There is no user with this username.",
-        succes: false,
+      res.json({
+        msg: "Wrong email or password!",
+        success: false,
       });
-
-    user.password !== passwordBody &&
-      res.status(401).json({
-        message: "Wrong Password.",
-        succes: false,
+    !user.password === passwordData &&
+      res.json({
+        msg: "Wrong email or password!",
+        success: false,
       });
 
     const { password, ...info } = user;
 
-    const accessToken = generateAccessToken(info);
+    const refreshToken = await jwt.sign(
+      info,
+      process.env.REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: "20d",
+      }
+    );
 
-    const refreshToken = jwt.sign(info, process.env.REFRESH_SECRET, {
-      expiresIn: "1y",
+    const accessToken = await jwt.sign(info, process.env.TOKEN_SECRET, {
+      expiresIn: "15m",
     });
     refreshTokens.push(refreshToken);
-
-    res.cookie("token", accessToken, { httpOnly: true });
-    res.json({ ...info, accessToken, refreshToken });
+    res.json({ ...info, accessToken, refreshToken, success: true });
   } catch (error) {
-    res.status(500).send("Something went broke.");
+    next(error);
   }
 };
 
 /******************* LOGOUT SECTION STARTS ****************/
 
 const LOGOUT = (req, res) => {
-  const { refresh_token } = req.cookies;
-
-  refreshTokens.filter((item) => item !== refresh_token);
-  res.cookie("refresh_token", "");
-  res.cookie("token", "");
-  res.sendStatus(200);
+  const token = req.headers.x_access_token;
+  try {
+    refreshTokens.filter((item) => item !== token);
+    res.json({ msg: "Logout successfull", success: true });
+  } catch (error) {
+    next(error);
+  }
 };
 
 /******************* TOKEN SECTION STARTS ****************/
 
-const TOKEN = async (req, res, next) => {
-  const { refresh_token } = req.cookies;
-
-  !refresh_token && res.sendStatus(401);
-  !refreshTokens.includes(refresh_token) && res.sendStatus(401);
-  try {
-    const user = await jwt.verify(refresh_token, process.env.REFRESH_SECRET);
-    const { iat, exp, ...info } = user;
-    const token = generateAccessToken(info);
-    res.cookie("token", token, { httpOnly: true });
-    res.sendStatus(200);
-  } catch (error) {
-    res.send("Something went broke!");
-  }
-};
+const TOKEN = async (req, res, next) => {};
 
 module.exports = { LOGIN, LOGOUT, TOKEN };

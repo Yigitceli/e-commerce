@@ -3,7 +3,7 @@ const faker = require("faker");
 const createFakeUser = () => ({
   first_name: faker.name.firstName(),
   last_name: faker.name.lastName(),
-  username: faker.internet.userName(),
+  email: faker.internet.email(),
   password: faker.internet.password(),
 });
 

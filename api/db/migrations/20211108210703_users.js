@@ -3,7 +3,7 @@ exports.up = function (knex) {
     table.increments("id");
     table.string("first_name", 255).notNullable();
     table.string("last_name", 255).notNullable();
-    table.string("username").notNullable();
+    table.string("email").notNullable();
     table.string("password").notNullable();
     table.boolean("is_admin").default(false);
     table.boolean("deleted").default(false);
