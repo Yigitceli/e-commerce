@@ -6,6 +6,7 @@ exports.up = function (knex) {
     table.string("email").notNullable();
     table.string("password").notNullable();
     table.boolean("is_admin").default(false);
+    table.boolean("checked").default(false);
     table.boolean("deleted").default(false);
     table.timestamps(true, true);
   });

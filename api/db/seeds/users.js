@@ -1,10 +1,12 @@
 const faker = require("faker");
+const bcrypt = require("bcrypt");
 
 const createFakeUser = () => ({
   first_name: faker.name.firstName(),
   last_name: faker.name.lastName(),
   email: faker.internet.email(),
-  password: faker.internet.password(),
+  checked: true,
+  password: bcrypt.hashSync("123456", 10),
 });
 
 exports.seed = function (knex) {

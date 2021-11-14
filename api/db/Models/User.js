@@ -19,28 +19,14 @@ class User extends Model {
     return {
       type: "object",
       properties: {
-        id: { type: "integer" },
         first_name: { type: "string" },
         last_name: { type: "string" },
-        is_admin: { type: "boolean" },
-        deleted: { type: "boolean" },
-        username: { type: "string", minLength: 6, maxLength: 22 },
-        password: { type: "string", minLength: 6, maxLength: 22 },
+        email: { type: "string" },
+        password: { type: "string" },
       },
     };
   }
-  static get relationMappings() {
-    const Cart = require("./Cart");
-    return {
-      owner: {
-        relation: Model.HasManyRelation,
-        modelClass: Cart,
-        join: {
-          from: "users.id",
-          to: "carts.user_id",
-        },
-      },
-    };
-  }
+
+  static get relationMappings() {}
 }
 module.exports = User;

@@ -11,8 +11,7 @@ class Color extends Model {
   static get jsonSchema() {
     return {
       type: "object",
-      properties: {
-        id: { type: "integer" },
+      properties: {        
         name: { type: "string" },
       },
     };
