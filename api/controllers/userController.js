@@ -47,7 +47,7 @@ const LOGIN = async (req, res, next) => {
         success: false,
       });
     const user = await User.query().select("*").where("email", email).first();
-    !user &&
+    (!user || user.deleted) &&
       res.status(402).json({
         msg: "Wrong email or password!",
         success: false,
@@ -192,7 +192,7 @@ const VERIFY = async (req, res, next) => {
   const { id } = req.params;
   try {
     await User.query().findById(id).patch({ checked: true });
-    res.status(200).send("You have verifired your email!");
+    res.status(200).send("You have verified your email!");
   } catch (error) {}
 };
 
