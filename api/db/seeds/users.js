@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const createFakeUser = () => ({
   first_name: faker.name.firstName(),
   last_name: faker.name.lastName(),
-  email: faker.internet.email(),
+  email: faker.internet.email().toLowerCase(),
   checked: true,
   password: bcrypt.hashSync("123456", 10),
 });

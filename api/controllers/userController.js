@@ -37,35 +37,40 @@ const generateAccessToken = async (user) => {
 /******************* LOGIN SECTION STARTS ****************/
 
 const LOGIN = async (req, res, next) => {
-  const { email, password } = req.body;
-  console.log(req.body);
+  let { email, password } = req.body;
+
   try {
-    !email &&
-      !password &&
-      res.json({
+    if (!email || !password) {
+      return res.json({
         msg: "Invalid Input",
         success: false,
       });
+    }
+    email = email.toLowerCase();
+
     const user = await User.query().select("*").where("email", email).first();
-    (!user || user.deleted) &&
-      res.status(402).json({
+    if (!user || user.deleted) {
+      return res.status(402).json({
         msg: "Wrong email or password!",
         success: false,
       });
+    }
 
-    !user.checked &&
-      res.status(402).json({
+    if (!user.checked) {
+      return res.status(402).json({
         msg: "Please verify your email!",
         success: false,
       });
+    }
 
-    const userPassword = bcrypt.compareSync(user.password, password);
+    const passwordCheck = bcrypt.compareSync(password, user.password);
 
-    !userPassword === password &&
-      res.status(402).json({
+    if (!passwordCheck) {
+      return res.status(402).json({
         msg: "Wrong email or password!",
         success: false,
       });
+    }
 
     const info = Object.fromEntries(
       Object.entries(user).filter(([key]) => !key.includes("password"))
@@ -92,8 +97,13 @@ const LOGIN = async (req, res, next) => {
 /******************* LOGOUT SECTION STARTS ****************/
 
 const LOGOUT = (req, res, next) => {
-  const token = req.headers.x_access_token;
+  const token = req.headers["x-access-token"];
   try {
+    if (!token) {
+      return res
+        .status(406)
+        .json({ msg: "Missing refresh token", success: false });
+    }
     refreshTokens.filter((item) => item !== token);
     res.status(200).json({ msg: "Logout successfull", success: true });
   } catch (error) {
@@ -104,24 +114,30 @@ const LOGOUT = (req, res, next) => {
 /******************* TOKEN SECTION STARTS ****************/
 
 const TOKEN = async (req, res, next) => {
-  const { refreshToken } = req.body;
-  !refreshToken &&
-    res.status(403).json({ msg: "Missing refresh token.", succes: false });
+  const refreshToken = req.headers["x-access-token"];
   try {
-    !refreshTokens.includes(refreshToken) &&
-      res
+    if (!refreshToken) {
+      return res
+        .status(403)
+        .json({ msg: "Missing refresh token.", succes: false });
+    }
+    if (!refreshTokens.includes(refreshToken)) {
+      return res
         .status(402)
         .json({ msg: "Unauthorized refresh token.", success: false });
+    }
 
-    const data = await jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET
-    );
-    !data &&
-      res
+    let data = null;
+    try {
+      data = await jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    } catch (error) {
+      return res
         .status(402)
         .json({ msg: "Unauthorized refresh token.", success: false });
+    }
+
     const { iat, exp, ...user } = data;
+
     const accessToken = await generateAccessToken(user);
     res.status(200).json({ refreshToken, accessToken, success: true });
   } catch (error) {
@@ -133,7 +149,8 @@ const TOKEN = async (req, res, next) => {
 
 const REGISTER = async (req, res, next) => {
   try {
-    const { first_name, last_name, email, password } = req.body;
+    let { first_name, last_name, email, password } = req.body;
+    email = email.toLowerCase();
     let errors = [];
 
     (!first_name || !last_name || !email || !password) &&
@@ -163,7 +180,6 @@ const REGISTER = async (req, res, next) => {
         checked: false,
       };
       const newUser = await User.query().insert(data);
-      console.log(newUser);
       const message = {
         from: "shopliyfy@gmail.com",
         to: email,
@@ -196,4 +212,39 @@ const VERIFY = async (req, res, next) => {
   } catch (error) {}
 };
 
-module.exports = { LOGIN, LOGOUT, TOKEN, REGISTER, VERIFY };
+/******************* GET_ALL_USERS SECTION STARTS ****************/
+
+const GET_ALL_USERS = async (req, res, next) => {
+  const token = req.headers?.authorization?.split(" ")[1];
+
+  try {
+    if (!token) {
+      return res.status(406).json({ msg: "Missing token!", success: false });
+    }
+    let user = null;
+
+    try {
+      user = jwt.verify(token, process.env.TOKEN_SECRET);
+    } catch (err) {
+      return res
+        .status(402)
+        .json({ msg: "Unauthorized Token!", success: false });
+    }
+
+    if (!user?.is_admin) {
+      return res
+        .status(402)
+        .json({ msg: "Unauthorized access!", success: false });
+    }
+
+    const users = await User.query().select("*");
+
+    users?.length > 0
+      ? res.status(200).json({ success: true, payload: users })
+      : res.status(500).json({ msg: "Something gone wrong.", success: false });
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+module.exports = { LOGIN, LOGOUT, TOKEN, REGISTER, VERIFY, GET_ALL_USERS };

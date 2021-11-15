@@ -7,6 +7,7 @@ const {
   TOKEN,
   REGISTER,
   VERIFY,
+  GET_ALL_USERS,
 } = require("../controllers/userController");
 const User = require("../db/Models/User");
 const authenticateToken = require("../middlewares/auth");
@@ -15,6 +16,7 @@ require("dotenv").config();
 /* GET users listing. */
 
 router.get("/logout", LOGOUT);
+router.get("/get_users", GET_ALL_USERS);
 router.get("/verify/:id", VERIFY);
 router.post("/login", LOGIN);
 router.post("/register", REGISTER);
