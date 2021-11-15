@@ -8,6 +8,7 @@ const {
   REGISTER,
   VERIFY,
   GET_ALL_USERS,
+  UPDATE_USER,
 } = require("../controllers/userController");
 const User = require("../db/Models/User");
 const authenticateToken = require("../middlewares/auth");
@@ -21,5 +22,6 @@ router.get("/verify/:id", VERIFY);
 router.post("/login", LOGIN);
 router.post("/register", REGISTER);
 router.post("/token", TOKEN);
+router.put('/:id', UPDATE_USER);
 
 module.exports = router;

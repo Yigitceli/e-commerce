@@ -14,6 +14,11 @@ var transporter = nodemailer.createTransport({
   },
 });
 
+const firstLetterUpperCase = (str) => {
+  const str2 = str.charAt(0).toUpperCase() + str.slice(1);
+  return str2;
+};
+
 function validateEmail(email) {
   const re =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -247,4 +252,79 @@ const GET_ALL_USERS = async (req, res, next) => {
   }
 };
 
-module.exports = { LOGIN, LOGOUT, TOKEN, REGISTER, VERIFY, GET_ALL_USERS };
+/******************* UPDATE_USER SECTION STARTS ****************/
+
+const UPDATE_USER = async (req, res, next) => {
+  const token = req.headers?.authorization?.split(" ")[1];
+  const { id } = req.params;
+  let { email, first_name, last_name, is_admin, deleted, ...rest } = req.body;
+
+  try {
+    if (!token) {
+      return res
+        .status(406)
+        .json({ msg: "Missing access token!", success: false });
+    }
+    let user = null;
+    try {
+      user = await jwt.verify(token, process.env.TOKEN_SECRET);
+    } catch (error) {
+      return res
+        .status(402)
+        .json({ msg: "Invalid access token", success: false });
+    }
+
+    if (id != user.id && !user.is_admin) {
+      return res
+        .status(402)
+        .json({ msg: "Unauthorized access!", success: false });
+    }
+
+    let userUpdated = null;
+    if (req.body) {
+      first_name = first_name ? firstLetterUpperCase(first_name) : null;
+
+      last_name = last_name ? firstLetterUpperCase(last_name) : null;
+
+      is_admin = user.is_admin ? is_admin : null;
+
+      deleted = user.is_admin ? deleted : null;
+
+      rest = user.is_admin ? rest : null;
+
+      let data = Object.assign(
+        {},
+        first_name && { first_name },
+        last_name && { last_name },
+        is_admin && { is_admin },
+        deleted && { deleted },
+        email && { email: email.toLowerCase() },
+        rest && { ...rest }
+      );
+
+      userUpdated =
+        Object.keys(data).length != 0
+          ? await User.query().patchAndFetchById(id, data)
+          : await User.query().findById(id);
+      console.log("TEST");
+    }
+
+    const { iat, exp, password, ...info } = userUpdated;
+
+    res
+      .status(200)
+      .json({ msg: "User updated.", payload: info, success: true });
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+module.exports = {
+  LOGIN,
+  LOGOUT,
+  TOKEN,
+  REGISTER,
+  VERIFY,
+  GET_ALL_USERS,
+  UPDATE_USER,
+};
