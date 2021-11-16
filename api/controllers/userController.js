@@ -1,9 +1,9 @@
 var jwt = require("jsonwebtoken");
+require("dotenv").config();
 const User = require("../db/Models/User");
 const bcrypt = require("bcrypt");
-const Color = require("../db/Models/Color");
 const nodemailer = require("nodemailer");
-require("dotenv").config();
+
 
 var transporter = nodemailer.createTransport({
   host: "smtp.mailtrap.io",
