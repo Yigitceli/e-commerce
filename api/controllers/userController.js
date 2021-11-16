@@ -43,7 +43,6 @@ const generateAccessToken = async (user) => {
 
 const LOGIN = async (req, res, next) => {
   let { email, password } = req.body;
-  
 
   try {
     if (!email || !password) {
@@ -52,7 +51,7 @@ const LOGIN = async (req, res, next) => {
         success: false,
       });
     }
-    
+
     email = email.toLowerCase();
 
     const user = await User.query().select("*").where("email", email).first();
@@ -62,7 +61,6 @@ const LOGIN = async (req, res, next) => {
         success: false,
       });
     }
-    
 
     if (!user.checked) {
       return res.status(402).json({
@@ -90,8 +88,7 @@ const LOGIN = async (req, res, next) => {
       {
         expiresIn: "20d",
       }
-    );
-    console.log('TEST')
+    );    
     const accessToken = await jwt.sign(info, process.env.TOKEN_SECRET, {
       expiresIn: "15m",
     });
@@ -223,22 +220,8 @@ const VERIFY = async (req, res, next) => {
 /******************* GET_ALL_USERS SECTION STARTS ****************/
 
 const GET_ALL_USERS = async (req, res, next) => {
-  const token = req.headers?.authorization?.split(" ")[1];
-
   try {
-    if (!token) {
-      return res.status(406).json({ msg: "Missing token!", success: false });
-    }
-    let user = null;
-
-    try {
-      user = jwt.verify(token, process.env.TOKEN_SECRET);
-    } catch (err) {
-      return res
-        .status(402)
-        .json({ msg: "Unauthorized Token!", success: false });
-    }
-
+    const user = req.user;
     if (!user?.is_admin) {
       return res
         .status(402)
@@ -258,25 +241,10 @@ const GET_ALL_USERS = async (req, res, next) => {
 /******************* UPDATE_USER SECTION STARTS ****************/
 
 const UPDATE_USER = async (req, res, next) => {
-  const token = req.headers?.authorization?.split(" ")[1];
   const { id } = req.params;
   let { email, first_name, last_name, is_admin, deleted, ...rest } = req.body;
-
   try {
-    if (!token) {
-      return res
-        .status(406)
-        .json({ msg: "Missing access token!", success: false });
-    }
-    let user = null;
-    try {
-      user = await jwt.verify(token, process.env.TOKEN_SECRET);
-    } catch (error) {
-      return res
-        .status(402)
-        .json({ msg: "Invalid access token", success: false });
-    }
-
+    const user = req.user;
     if (id != user.id && !user.is_admin) {
       return res
         .status(402)
@@ -325,23 +293,10 @@ const UPDATE_USER = async (req, res, next) => {
 /******************* DELETE SECTION STARTS ****************/
 
 const DELETE_USER = async (req, res, next) => {
-  const token = req.headers?.authorization?.split(" ")[1];
   const { id } = req.params;
 
   try {
-    if (!token) {
-      return res
-        .status(406)
-        .json({ msg: "Missing access token!", success: false });
-    }
-    let user = null;
-    try {
-      user = await jwt.verify(token, process.env.TOKEN_SECRET);
-    } catch (error) {
-      return res
-        .status(402)
-        .json({ msg: "Invalid access token", success: false });
-    }
+    const user = req.user;
 
     if (id != user.id && !user.is_admin) {
       return res
@@ -349,13 +304,11 @@ const DELETE_USER = async (req, res, next) => {
         .json({ msg: "Unauthorized access!", success: false });
     }
 
-    const userInfo = await User.query().where('id', id).delete();
-
-    
+    await User.query().where("id", id).delete();
 
     res
       .status(200)
-      .json({ msg: "User Deleted.", payload: {id}, success: true });
+      .json({ msg: "User Deleted.", payload: { id }, success: true });
   } catch (error) {
     res.sendStatus(500);
   }
@@ -369,5 +322,5 @@ module.exports = {
   VERIFY,
   GET_ALL_USERS,
   UPDATE_USER,
-  DELETE_USER
+  DELETE_USER,
 };
