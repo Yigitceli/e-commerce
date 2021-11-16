@@ -9,6 +9,7 @@ const {
   VERIFY,
   GET_ALL_USERS,
   UPDATE_USER,
+  DELETE_USER,
 } = require("../controllers/userController");
 const User = require("../db/Models/User");
 const authenticateToken = require("../middlewares/auth");
@@ -23,5 +24,6 @@ router.post("/login", LOGIN);
 router.post("/register", REGISTER);
 router.post("/token", TOKEN);
 router.put('/:id', UPDATE_USER);
+router.delete('/:id', DELETE_USER)
 
 module.exports = router;
