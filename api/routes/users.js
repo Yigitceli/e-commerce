@@ -1,6 +1,5 @@
 var express = require("express");
 var router = express.Router();
-var jwt = require("jsonwebtoken");
 const {
   LOGIN,
   LOGOUT,
@@ -11,19 +10,18 @@ const {
   UPDATE_USER,
   DELETE_USER,
 } = require("../controllers/userController");
-const User = require("../db/Models/User");
-const authenticateToken = require("../middlewares/auth");
+const authenticate = require("../middlewares/auth");
 require("dotenv").config();
 
 /* GET users listing. */
 
 router.get("/logout", LOGOUT);
-router.get("/get_users", authenticateToken, GET_ALL_USERS);
+router.get("/get_users", authenticate, GET_ALL_USERS);
 router.get("/verify/:id", VERIFY);
 router.post("/login", LOGIN);
 router.post("/register", REGISTER);
 router.post("/token", TOKEN);
-router.put('/:id', authenticateToken, UPDATE_USER);
-router.delete('/:id', authenticateToken, DELETE_USER)
+router.put('/:id', authenticate, UPDATE_USER);
+router.delete('/:id', authenticate, DELETE_USER)
 
 module.exports = router;
