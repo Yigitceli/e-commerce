@@ -14,11 +14,27 @@ const GET_PRODUCTS = async (req, res, next) => {
       color && { color },
       size && { size }
     );
-
-    if (filter) {
-      var products = await Product.query();
-      whereExists(Product.relatedQuery("sizes"));
+    
+    if (!Object.keys(filter).length == 0) {      
+      var products = await Product.query()
+        .withGraphFetched("[sizes, colors]")
+        .select("*")
+        .where({ category });
       console.log(products);
+      if (filter.color) {
+        products = products.filter((item) =>
+          item.colors.some((colorItem) => {
+            return colorItem.name == color;
+          })
+        );
+      }
+      if (filter.size) {
+        products = products.filter((item) =>
+          item.sizes.some((sizeItem) => {
+            return sizeItem.size == size.toUpperCase();
+          })
+        );
+      }
     } else {
       var products = await Product.query().select("*");
     }
