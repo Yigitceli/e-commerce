@@ -20,7 +20,7 @@ const GET_PRODUCTS = async (req, res, next) => {
         .withGraphFetched("[sizes, colors]")
         .select("*")
         .where({ category });
-      console.log(products);
+      
       if (filter.color) {
         products = products.filter((item) =>
           item.colors.some((colorItem) => {
