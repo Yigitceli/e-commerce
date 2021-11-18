@@ -14,8 +14,8 @@ const GET_PRODUCTS = async (req, res, next) => {
       color && { color },
       size && { size }
     );
-    
-    if (!Object.keys(filter).length == 0) {      
+
+    if (!Object.keys(filter).length == 0) {
       var products = await Product.query()
         .withGraphFetched("[sizes, colors]")
         .select("*")
@@ -82,4 +82,40 @@ const GET_PRODUCT = async (req, res, next) => {
   }
 };
 
-module.exports = { GET_PRODUCTS, GET_PRODUCT };
+/******************* ADD_PRODUCT SECTION STARTS ****************/
+
+const ADD_PRODUCT = async (req, res, next) => {
+  const user = req.user;
+  const { color, ...data } = req.body;
+  try {
+    try {
+      let product = await Product.transaction(async (trx) => {
+        let product = await Product.query(trx).insert({ ...data });
+
+        await Product.relatedQuery("colors", trx)
+          .for(product.id)
+          .relate(data.colors);
+
+          console.log(data)
+        await Product.relatedQuery("sizes", trx)
+          .for(product.id)
+          .relate(data.sizes);
+
+        return product;
+      });      
+      res.json(product);
+    } catch (error) {
+      return res
+        .status(406)
+        .json({ msg: "Invalid Inputs", success: false });
+    }
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+module.exports = { GET_PRODUCTS, GET_PRODUCT, ADD_PRODUCT };
+
+// if(!user.is_admin){
+//   return res.status(402).json({msg:'Unauhtorized Access!', success:false});
+// }
