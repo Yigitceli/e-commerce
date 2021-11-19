@@ -20,7 +20,7 @@ const GET_PRODUCTS = async (req, res, next) => {
         .withGraphFetched("[sizes, colors]")
         .select("*")
         .where({ category });
-      
+
       if (filter.color) {
         products = products.filter((item) =>
           item.colors.some((colorItem) => {
@@ -86,25 +86,23 @@ const GET_PRODUCT = async (req, res, next) => {
 
 const ADD_PRODUCT = async (req, res, next) => {
   const user = req.user;
-  const { color, ...data } = req.body;
+  const { colors, sizes, ...data } = req.body;
   try {
     if (!user.is_admin) {
       return res
         .status(402)
         .json({ msg: "Unauhtorized Access!", success: false });
     }
+
     try {
       let product = await Product.transaction(async (trx) => {
         let product = await Product.query(trx).insert({ ...data });
 
         await Product.relatedQuery("colors", trx)
           .for(product.id)
-          .relate(data.colors);
+          .relate(colors);
 
-        console.log(data);
-        await Product.relatedQuery("sizes", trx)
-          .for(product.id)
-          .relate(data.sizes);
+        await Product.relatedQuery("sizes", trx).for(product.id).relate(sizes);
 
         return product;
       });
@@ -117,6 +115,54 @@ const ADD_PRODUCT = async (req, res, next) => {
   }
 };
 
-module.exports = { GET_PRODUCTS, GET_PRODUCT, ADD_PRODUCT };
+
+
+/******************* UPDATE_PRODUCT SECTION STARTS ****************/
+
+const UPDATE_PRODUCT = async (req, res, next) => {
+  const { id } = req.params;
+  const { colors, sizes, ...data } = req.body;
+  const user = req.user;
+  try {
+    if (!user.is_admin) {
+      return res
+        .status(402)
+        .json({ msg: "Unauhtorized Access!", success: false });
+    }
+    try {
+      let product = await Product.transaction(async (trx) => {
+        let product = await Product.query(trx).patchAndFetchById(id, {
+          ...data,
+        });
+
+        await Product.relatedQuery("colors", trx)
+          .for(id)
+          .unrelate()
+          .where("product_id", id);
+
+        product = await Product.relatedQuery("colors", trx)
+          .for(id)
+          .relate(colors);
+        
+        await Product.relatedQuery("sizes", trx)
+          .for(id)
+          .unrelate()
+          .where("product_id", id);
+
+        product = await Product.relatedQuery("sizes", trx)
+          .for(id)
+          .relate(sizes);
+        return product;
+      });
+      return res.json(product);
+    } catch (error) {
+      return res.status(406).json({ msg: "Invalid Inputs", success: false });
+    }
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+module.exports = { GET_PRODUCTS, GET_PRODUCT, ADD_PRODUCT, UPDATE_PRODUCT };
 
 //
