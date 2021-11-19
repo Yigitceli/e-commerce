@@ -12,8 +12,7 @@ class Product extends Model {
   static get jsonSchema() {
     return {
       type: "object",
-      properties: {
-        id: { type: "integer" },
+      properties: {        
         title: { type: "string" },
         description: { type: "text" },
         category: { type: "string" },

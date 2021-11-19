@@ -1,7 +1,7 @@
 exports.up = function (knex) {
   return knex.schema.createTable("cart_items", function (table) {
-    table.integer("cart_id").references("id").inTable("carts");
-    table.integer("product_id").references("id").inTable("products");
+    table.integer("cart_id").references("id").inTable("carts").onDelete('cascade');
+    table.integer("product_id").references("id").inTable("products").onDelete('cascade');
     table.timestamps(true, true);
   });
 };

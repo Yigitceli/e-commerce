@@ -96,7 +96,7 @@ const ADD_PRODUCT = async (req, res, next) => {
 
     try {
       let product = await Product.transaction(async (trx) => {
-        let product = await Product.query(trx).insert({ ...data });
+        let product = await Product.query(trx).insertAndFetch(data);
 
         await Product.relatedQuery("colors", trx)
           .for(product.id)
@@ -106,16 +106,15 @@ const ADD_PRODUCT = async (req, res, next) => {
 
         return product;
       });
-      res.json(product);
+      return res.json({ msg: "Product Added.", payload: product, success: true });
     } catch (error) {
+      return res.send(error);
       return res.status(406).json({ msg: "Invalid Inputs", success: false });
     }
   } catch (error) {
     res.sendStatus(500);
   }
 };
-
-
 
 /******************* UPDATE_PRODUCT SECTION STARTS ****************/
 
@@ -143,7 +142,7 @@ const UPDATE_PRODUCT = async (req, res, next) => {
         product = await Product.relatedQuery("colors", trx)
           .for(id)
           .relate(colors);
-        
+
         await Product.relatedQuery("sizes", trx)
           .for(id)
           .unrelate()
@@ -154,7 +153,7 @@ const UPDATE_PRODUCT = async (req, res, next) => {
           .relate(sizes);
         return product;
       });
-      return res.json(product);
+      return res.json({ msg: "Product Updated.", payload: product, success: true });
     } catch (error) {
       return res.status(406).json({ msg: "Invalid Inputs", success: false });
     }
@@ -163,6 +162,32 @@ const UPDATE_PRODUCT = async (req, res, next) => {
   }
 };
 
-module.exports = { GET_PRODUCTS, GET_PRODUCT, ADD_PRODUCT, UPDATE_PRODUCT };
+/******************* DELETE_PRODUCT SECTION STARTS ****************/
 
-//
+const DELETE_PRODUCT = async (req, res, next) => {
+  const { id } = req.params;
+  const user = req.user;
+  try {
+    if (!user.is_admin) {
+      return res
+        .status(402)
+        .json({ msg: "Unauhtorized Access!", success: false });
+    }
+    try {
+      const product = await Product.query().deleteById(id);
+      return res.json({ msg: "Product Deleted.", success: true });
+    } catch (error) {
+      return res.status(406).json({ msg: "Invalid Inputs", success: false });
+    }
+  } catch (error) {
+    res.sendStatus(500);
+  }
+};
+
+module.exports = {
+  GET_PRODUCTS,
+  GET_PRODUCT,
+  ADD_PRODUCT,
+  UPDATE_PRODUCT,
+  DELETE_PRODUCT,
+};

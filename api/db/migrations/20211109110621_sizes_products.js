@@ -1,6 +1,6 @@
 exports.up = function (knex) {
   return knex.schema.createTable("sizes_products", function (table) {
-    table.integer("size_id").references("id").inTable("sizes");
+    table.integer("size_id").references("id").inTable("sizes").onDelete('cascade');
     table.integer("product_id").references("id").inTable("products").onDelete('cascade');
   });
 };
