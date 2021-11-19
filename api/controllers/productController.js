@@ -1,7 +1,4 @@
-var jwt = require("jsonwebtoken");
-const { whereExists } = require("../db/db");
 const Product = require("../db/Models/Product");
-require("dotenv").config();
 
 /******************* GET_PRODUCTS SECTION STARTS ****************/
 
@@ -57,15 +54,10 @@ const GET_PRODUCTS = async (req, res, next) => {
 const GET_PRODUCT = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const product = await Product.query().select("*").where({ id }).first();
-
-    const colors = await Product.relatedQuery("colors")
-      .for(product)
-      .select("*");
-
-    const sizes = await Product.relatedQuery("sizes").for(product).select("*");
-
-    const data = { product, colors, sizes };
+    const product = await Product.query()
+      .withGraphFetched("[sizes, colors]")
+      .select("*")
+      .where({ id });    
 
     if (!product) {
       return res
@@ -75,7 +67,7 @@ const GET_PRODUCT = async (req, res, next) => {
     res.status(200).json({
       msg: `Product with ID:${id} sent!`,
       success: true,
-      payload: data,
+      payload: product,
     });
   } catch (error) {
     res.sendStatus(500);
@@ -106,7 +98,11 @@ const ADD_PRODUCT = async (req, res, next) => {
 
         return product;
       });
-      return res.json({ msg: "Product Added.", payload: product, success: true });
+      return res.json({
+        msg: "Product Added.",
+        payload: product,
+        success: true,
+      });
     } catch (error) {
       return res.send(error);
       return res.status(406).json({ msg: "Invalid Inputs", success: false });
@@ -153,7 +149,11 @@ const UPDATE_PRODUCT = async (req, res, next) => {
           .relate(sizes);
         return product;
       });
-      return res.json({ msg: "Product Updated.", payload: product, success: true });
+      return res.json({
+        msg: "Product Updated.",
+        payload: product,
+        success: true,
+      });
     } catch (error) {
       return res.status(406).json({ msg: "Invalid Inputs", success: false });
     }
