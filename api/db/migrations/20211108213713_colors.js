@@ -1,7 +1,7 @@
 exports.up = function (knex) {
   return knex.schema.createTable("colors", function (table) {
     table.increments("id");
-    table.string("name").notNullable();
+    table.string("name").notNullable().unique();
     table.timestamps(true, true);
   });
 };

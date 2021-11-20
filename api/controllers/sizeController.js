@@ -1,10 +1,9 @@
-const Color = require("../db/Models/Color");
-const Product = require("../db/Models/Product");
+const Size = require("../db/Models/Size");
 
-/******************* ADD_COLOR SECTION STARTS ****************/
-const ADD_COLOR = async (req, res, next) => {
+/******************* ADD_SIZE SECTION STARTS ****************/
+const ADD_SIZE = async (req, res, next) => {
   const user = req.user;
-  const { name } = req.body;
+  const { size } = req.body;
   try {
     if (!user.is_admin) {
       return res
@@ -13,14 +12,14 @@ const ADD_COLOR = async (req, res, next) => {
     }
 
     try {
-      var color = await Color.query().insertAndFetch({ name });
+      var newSize = await Size.query().insertAndFetch({ size });
     } catch (error) {
       return res.status(406).json({ msg: "Invalid Inputs.", success: false });
     }
 
     return res.status(200).json({
-      msg: "Color Added.",
-      payload: color,
+      msg: "Size Added.",
+      payload: newSize,
       success: true,
     });
   } catch (error) {
@@ -28,9 +27,9 @@ const ADD_COLOR = async (req, res, next) => {
   }
 };
 
-/******************* DELETE_COLOR SECTION STARTS ****************/
+/******************* DELETE_SIZE SECTION STARTS ****************/
 
-const DELETE_COLOR = async (req, res, next) => {
+const DELETE_SIZE = async (req, res, next) => {
   const user = req.user;
   const { id } = req.params;
   try {
@@ -40,19 +39,19 @@ const DELETE_COLOR = async (req, res, next) => {
         .json({ msg: "Unauhtorized Access!", success: false });
     }
     try {
-      await Color.query().deleteById(id);
+      await Size.query().deleteById(id);
     } catch (error) {
       return res.status(406).json({ msg: "Invalid Inputs.", success: false });
     }
-    return res.json({ msg: "Color Removed.", payload: id, success: true });
+    return res.json({ msg: "Size Removed.", payload: id, success: true });
   } catch (error) {
     res.sendStatus(500);
   }
 };
 
-/******************* GET_COLORS SECTION STARTS ****************/
+/******************* GET_SIZES SECTION STARTS ****************/
 
-const GET_COLORS = async (req, res, next) => {
+const GET_SIZES = async (req, res, next) => {
   const user = req.user;
   try {
     if (!user.is_admin) {
@@ -61,14 +60,14 @@ const GET_COLORS = async (req, res, next) => {
         .json({ msg: "Unauhtorized Access!", success: false });
     }
     try {
-      var colors = await Color.query().select("*");
+      var sizes = await Size.query().select("*");
     } catch (error) {
       return res.status(406).json({ msg: "Invalid Inputs.", success: false });
     }
-    return res.json({ msg: "Colors Sent.", payload: colors, success: true });
+    return res.json({ msg: "Sizes Sent.", payload: sizes, success: true });
   } catch (error) {
     res.sendStatus(500);
   }
 };
 
-module.exports = { ADD_COLOR, DELETE_COLOR, GET_COLORS };
+module.exports = { ADD_SIZE, GET_SIZES, DELETE_SIZE };
