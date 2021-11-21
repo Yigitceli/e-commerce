@@ -1,3 +1,4 @@
+const Product = require("../db/Models/Product");
 const Size = require("../db/Models/Size");
 
 /******************* ADD_SIZE SECTION STARTS ****************/
@@ -51,19 +52,14 @@ const DELETE_SIZE = async (req, res, next) => {
 
 /******************* GET_SIZES SECTION STARTS ****************/
 
-const GET_SIZES = async (req, res, next) => {
-  const user = req.user;
+const GET_SIZES = async (req, res, next) => { 
   try {
-    if (!user.is_admin) {
-      return res
-        .status(402)
-        .json({ msg: "Unauhtorized Access!", success: false });
-    }
     try {
       var sizes = await Size.query().select("*");
     } catch (error) {
       return res.status(406).json({ msg: "Invalid Inputs.", success: false });
     }
+
     return res.json({ msg: "Sizes Sent.", payload: sizes, success: true });
   } catch (error) {
     res.sendStatus(500);

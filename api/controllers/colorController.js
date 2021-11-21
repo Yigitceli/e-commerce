@@ -53,18 +53,34 @@ const DELETE_COLOR = async (req, res, next) => {
 /******************* GET_COLORS SECTION STARTS ****************/
 
 const GET_COLORS = async (req, res, next) => {
-  const user = req.user;
+  const { category } = req.query;
   try {
-    if (!user.is_admin) {
-      return res
-        .status(402)
-        .json({ msg: "Unauhtorized Access!", success: false });
+    if (category) {
+      try {
+        var colors = await Product.transaction(async (trx) => {
+          ids = await Product.query(trx).select("id").where({ category });
+          ids = ids.map((item) => item.id);
+          colors = await Product.relatedQuery("colors")
+            .for(ids)
+            .distinctOn("name");
+          return colors;
+        });
+        return res.json({
+          msg: "Colors Sent.",
+          payload: colors,
+          success: true,
+        });
+      } catch (error) {
+        return res.status(406).json({ msg: "Invalid Inputs.", success: false });
+      }
+    } else {
+      try {
+        var colors = await Color.query().select("*");
+      } catch (error) {
+        return res.status(406).json({ msg: "Invalid Inputs.", success: false });
+      }
     }
-    try {
-      var colors = await Color.query().select("*");
-    } catch (error) {
-      return res.status(406).json({ msg: "Invalid Inputs.", success: false });
-    }
+
     return res.json({ msg: "Colors Sent.", payload: colors, success: true });
   } catch (error) {
     res.sendStatus(500);

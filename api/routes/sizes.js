@@ -7,7 +7,7 @@ const authenticate = require("../middlewares/auth");
 
 const router = require("express").Router();
 
-router.get("/", authenticate, GET_SIZES);
+router.get("/", GET_SIZES);
 router.post("/", authenticate, ADD_SIZE);
 router.delete("/:id", authenticate, DELETE_SIZE);
 

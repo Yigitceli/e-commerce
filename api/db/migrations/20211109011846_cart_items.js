@@ -11,6 +11,8 @@ exports.up = function (knex) {
       .inTable("products")
       .onDelete("cascade");
     table.integer("quantity").default(1);
+    table.integer("color").references("id").inTable("colors").notNullable();
+    table.integer("size").references("id").inTable("sizes").notNullable();
     table.timestamps(true, true);
   });
 };

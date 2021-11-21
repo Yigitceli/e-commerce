@@ -4,7 +4,7 @@ const softDelete = require("objection-soft-delete");
 
 Model.knex(Knex);
 
-class User extends Model {
+class User extends softDelete({ columnName: "deleted" })(Model) {
   // Table name is the only required property.
 
   static get tableName() {

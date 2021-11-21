@@ -1,9 +1,10 @@
 const { Model } = require("objection");
 const Knex = require("../db");
+const softDelete = require("objection-soft-delete");
 
 Model.knex(Knex);
 
-class Cart extends Model {
+class Cart extends softDelete({ columnName: "deleted" })(Model) {
   // Table name is the only required property.
 
   static get tableName() {
@@ -32,7 +33,7 @@ class Cart extends Model {
           through: {
             from: "cart_items.cart_id",
             to: "cart_items.product_id",
-            extra: ["quantity"],
+            extra: ["quantity", 'color', 'size'],
           },
           to: "products.id",
         },

@@ -19,14 +19,14 @@ const GET_PRODUCTS = async (req, res, next) => {
         .where({ category });
 
       if (filter.color) {
-        products = products.filter((item) =>
+        products = products?.filter((item) =>
           item.colors.some((colorItem) => {
             return colorItem.name == color;
           })
         );
       }
       if (filter.size) {
-        products = products.filter((item) =>
+        products = products?.filter((item) =>
           item.sizes.some((sizeItem) => {
             return sizeItem.size == size.toUpperCase();
           })
