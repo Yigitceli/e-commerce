@@ -1,4 +1,4 @@
-const Model = require("../db");
+const { Model } = require("objection");
 const Knex = require("../db");
 
 Model.knex(Knex);
@@ -24,19 +24,8 @@ class Order extends Model {
           from: "orders.id",
           to: "carts.id",
         },
-      },
-      orderItems: {
-        relation: Model.ManyToManyRelation,
-        modelClass: Product,
-        join: {
-          from: "orders.id",
-          through: {
-            from: "order_items.product_id",
-            to: "order_items.order_id",
-          },
-          to: "products.id",
-        },
-      },
+      },      
+      
     };
   }
 }

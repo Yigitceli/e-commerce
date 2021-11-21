@@ -1,4 +1,4 @@
-const Model = require("../db");
+const { Model } = require("objection");
 const Knex = require("../db");
 
 Model.knex(Knex);
@@ -12,12 +12,11 @@ class Cart extends Model {
   static get id() {
     return "id";
   }
-
   static get relationMappings() {
     const User = require("./User");
-    const Order = require("./Order");
+    const Product = require("./Product");
     return {
-      owner: {
+      users: {
         relation: Model.BelongsToOneRelation,
         modelClass: User,
         join: {
@@ -25,12 +24,17 @@ class Cart extends Model {
           to: "users.id",
         },
       },
-      order: {
-        relation: Model.HasOneRelation,
-        modelClass: Order,
+      cart_items: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Product,
         join: {
           from: "carts.id",
-          to: "orders.id",
+          through: {
+            from: "cart_items.cart_id",
+            to: "cart_items.product_id",
+            extra: ["quantity"],
+          },
+          to: "products.id",
         },
       },
     };

@@ -12,7 +12,7 @@ class Product extends Model {
   static get jsonSchema() {
     return {
       type: "object",
-      properties: {        
+      properties: {
         title: { type: "string" },
         description: { type: "text" },
         category: { type: "string" },
@@ -24,6 +24,7 @@ class Product extends Model {
   static get relationMappings() {
     const Color = require("./Color");
     const Size = require("./Size");
+    const Cart = require("./Cart");
 
     return {
       colors: {
@@ -48,6 +49,19 @@ class Product extends Model {
             to: "sizes_products.size_id",
           },
           to: "sizes.id",
+        },
+      },
+      cart_items: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Cart,
+        join: {
+          from: "products.id",          
+          through: {
+            from: "cart_items.product_id",
+            to: "cart_items.cart_id",
+            extra: ["quantity"],
+          },
+          to: "carts.id",
         },
       },
     };
