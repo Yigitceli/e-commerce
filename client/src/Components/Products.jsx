@@ -62,6 +62,7 @@ export default function Products(props) {
 
   useEffect(() => {
     if (sort === "newest") {
+      setProductsData(data);
     } else if (sort === "asc") {
       setProductsData(
         data.slice().sort((a, b) => {
