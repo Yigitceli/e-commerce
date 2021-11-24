@@ -4,6 +4,7 @@ import axios from "../axios";
 export const fetchProducts = createAsyncThunk(
   "fetchProducts",
   async (filter = null, thunkAPI) => {
+    console.log(filter);
     if (filter) {
       var { data } = await axios.get(
         `product?category=${filter.category}` +

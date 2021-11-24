@@ -56,7 +56,7 @@ const Wrapper = styled.div``;
 export default function ProductList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const category = searchParams.get("category");
-  const [filter, setFilter] = useState({});
+  const [filter, setFilter] = useState(null);
   const [colors, setColors] = useState(null);
   const [sizes, setSizes] = useState(null);
   const [sort, setSort] = useState("newest");

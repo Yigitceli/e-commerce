@@ -100,9 +100,19 @@ export default function Products(props) {
         </LoadingContainer>
       ) : (
         <>
-          {productsData?.map((item) => (
-            <ProductItem key={item.id} data={item} />
-          ))}
+          {filter ? (
+            <>
+              {productsData?.map((item) => (
+                <ProductItem key={item.id} data={item} />
+              ))}
+            </>
+          ) : (
+            <>
+              {productsData?.slice(0, 7)?.map((item) => (
+                <ProductItem key={item.id} data={item} />
+              ))}
+            </>
+          )}
         </>
       )}
     </Container>
