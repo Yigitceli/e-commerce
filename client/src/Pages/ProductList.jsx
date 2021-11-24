@@ -59,14 +59,11 @@ export default function ProductList() {
   const [filter, setFilter] = useState({});
   const [colors, setColors] = useState(null);
   const [sizes, setSizes] = useState(null);
+  const [sort, setSort] = useState("newest");
 
   useEffect(() => {
     setFilter((prev) => ({ ...prev, category }));
   }, [category]);
-
-  useEffect(() => {
-    console.log(filter);
-  }, [filter]);
 
   useEffect(() => {
     const fetchColorsAndSizes = async (category) => {
@@ -130,15 +127,19 @@ export default function ProductList() {
         </Left>
         <Right>
           <Description>Sort Products:</Description>
-          <Select name="sort" defaultValue="Newest">
-            <Value>Newest</Value>
-            <Value>Price ASC</Value>
-            <Value>Price DESC</Value>
+          <Select
+            name="sort"
+            defaultValue="Newest"
+            onChange={(e) => setSort(e.target.value)}
+          >
+            <Value value="newest">Newest</Value>
+            <Value value="asc">Price ASC</Value>
+            <Value value="desc">Price DESC</Value>
           </Select>
         </Right>
       </Filters>
       <Wrapper>
-        <Products filter={filter} />
+        <Products filter={filter} sort={sort} />
       </Wrapper>
     </Container>
   );

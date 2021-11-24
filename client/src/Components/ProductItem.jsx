@@ -65,10 +65,7 @@ export default function ProductItem({ data }) {
   return (
     <Wrapper>
       <ProductImg src={data.image} />
-      <Info>
-        <Icon to={`/product/${data.id}`}>
-          <FavoriteBorderOutlined />
-        </Icon>
+      <Info>        
         <Icon to={`/product/${data.id}`}>
           <SearchOutlined />
         </Icon>

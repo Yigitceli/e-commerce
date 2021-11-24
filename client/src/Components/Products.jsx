@@ -47,13 +47,37 @@ const Description = styled.p`
 `;
 
 export default function Products(props) {
-  const { isLoading, isError, data } = useSelector((state) => state.products);
+  var { isLoading, isError, data } = useSelector((state) => state.products);
+  const [productsData, setProductsData] = useState(null);
   const dispatch = useDispatch();
-  const { filter } = props;
+  const { filter, sort } = props;
 
   useEffect(() => {
     filter ? dispatch(fetchProducts(filter)) : dispatch(fetchProducts());
   }, [filter, dispatch]);
+
+  useEffect(() => {
+    setProductsData(data);
+  }, [data]);
+
+  useEffect(() => {
+    if (sort === "newest") {
+    } else if (sort === "asc") {
+      setProductsData(
+        data.slice().sort((a, b) => {
+          return a.price - b.price;
+        })
+      );
+    } else if (sort === "desc") {
+      setProductsData(
+        data?.slice().sort((a, b) => {
+          return a.price + b.price;
+        })
+      );
+    }
+  }, [sort, data]);
+
+  useEffect(() => {}, [productsData]);
 
   return (
     <Container>
@@ -75,7 +99,7 @@ export default function Products(props) {
         </LoadingContainer>
       ) : (
         <>
-          {data?.map((item) => (
+          {productsData?.map((item) => (
             <ProductItem key={item.id} data={item} />
           ))}
         </>

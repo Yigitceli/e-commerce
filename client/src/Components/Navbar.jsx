@@ -18,18 +18,18 @@ const NavbarContainer = styled.div`
 
 const Logo = styled(Link)`
   font-weight: bolder;
-  color:black;
-  text-decoration:none;
+  color: black;
+  text-decoration: none;
   flex: 1;
-  text-align: center;
+  text-align: left;
   font-size: 30px;
-  ${middle({ fontSize: "30px", textAlign: "end" })}
 `;
 
 const Left = styled.div`
   display: flex;
   flex: 1;
   align-items: center;
+  text-align: left;
 `;
 
 const Right = styled.div`
@@ -56,23 +56,6 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-`;
-
-const SearchGroup = styled.div`
-  border: 1px solid #d3d3d3;
-  padding: 5px;
-  margin-left: 20px;
-  display: flex;
-  align-items: center;
-  ${middle({ width: "100%", margin: 0 })}
-`;
-
-const SearchInput = styled.input`
-  border: none;
-  width: 100%;
-  &:focus {
-    outline: none;
-  }
 `;
 
 const AuthItem = styled.span`
@@ -115,46 +98,11 @@ export default function Navbar(props) {
     <Container>
       <NavbarContainer sx={{ display: "flex" }}>
         <Left>
-          <Lang>EN</Lang>
-          <SearchGroup>
-            <SearchInput placeholder="Search" />
-            <Search style={{ fontSize: "20px", fontWeight: "100" }} />
-          </SearchGroup>
+          <Logo to="/">Shoplify.</Logo>
         </Left>
-        <Logo to="/">Shoplify.</Logo>
         <Right>
-          <AuthItem nonMobile first>
-            SIGN IN
-          </AuthItem>
-          <AuthItem nonMobile>REGISTER</AuthItem>
-          <AuthItem Mobile>
-            <Person
-              style={{ cursor: "pointer", color: "tomato", fontSize: "32px" }}
-              onClick={() => setOpen(!open)}
-            />
-            {open && (
-              <DropDownMenu>
-                <MenuItem>
-                  <Link
-                    className="auth-link"
-                    style={{ textDecoration: "none", fontWeight: "600" }}
-                    to="#"
-                  >
-                    LOGIN
-                  </Link>
-                </MenuItem>
-                <MenuItem>
-                  <Link
-                    className="auth-link"
-                    to="#"
-                    style={{ textDecoration: "none", fontWeight: "600" }}
-                  >
-                    REGISTER
-                  </Link>
-                </MenuItem>
-              </DropDownMenu>
-            )}
-          </AuthItem>
+          <AuthItem first>SIGN IN</AuthItem>
+          <AuthItem>REGISTER</AuthItem>
           <AuthItem>
             <Badge badgeContent={4} color="secondary">
               <ShoppingCart style={{ color: "tomato" }} />
