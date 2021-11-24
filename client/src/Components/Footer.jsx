@@ -125,8 +125,8 @@ export default function Footer() {
       <Middle>
         <Title>Useful Links</Title>
         <MenuContainer>
-          {menuItems.map((item) => (
-            <MenuItem>{item}</MenuItem>
+          {menuItems.map((item, key) => (
+            <MenuItem key={key}>{item}</MenuItem>
           ))}
         </MenuContainer>
       </Middle>

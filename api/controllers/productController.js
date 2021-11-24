@@ -57,7 +57,8 @@ const GET_PRODUCT = async (req, res, next) => {
     const product = await Product.query()
       .withGraphFetched("[sizes, colors]")
       .select("*")
-      .where({ id });    
+      .where({ id })
+      .first();
 
     if (!product) {
       return res

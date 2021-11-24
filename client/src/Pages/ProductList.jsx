@@ -1,6 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router";
+import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
+import axios from "../axios";
 import Products from "../Components/Products";
+
+const firstLetterUpperCase = (str) => {
+  const str2 = str.charAt(0).toUpperCase() + str.slice(1);
+  return str2;
+};
 
 const Container = styled.div`
   display: flex;
@@ -46,28 +54,91 @@ const Value = styled.option``;
 const Wrapper = styled.div``;
 
 export default function ProductList() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const category = searchParams.get("category");
+  const [filter, setFilter] = useState({});
+  const [colors, setColors] = useState(null);
+  const [sizes, setSizes] = useState(null);
+
+  useEffect(() => {
+    setFilter((prev) => ({ ...prev, category }));
+  }, [category]);
+
+  useEffect(() => {
+    console.log(filter);
+  }, [filter]);
+
+  useEffect(() => {
+    const fetchColorsAndSizes = async (category) => {
+      if (category) {
+        const response = await axios.get(`/color?category=${category}`);
+        setColors(response.data.payload);
+        const response2 = await axios.get(`/size`);
+        setSizes(response2.data.payload);
+      } else {
+        const response = await axios.get(`/color`);
+        setColors(response.data.payload);
+        const response2 = await axios.get(`/size`);
+        setSizes(response2.data.payload);
+      }
+    };
+    fetchColorsAndSizes(category);
+  }, [category]);
+
   return (
     <Container>
-      <CategoryTitle>Coat</CategoryTitle>
+      <CategoryTitle>{category.toUpperCase()}</CategoryTitle>
       <Filters>
         <Left>
           <Description>Filter Products:</Description>
-          <Select name="color" defaultValue="Color">
+          <Select
+            name="color"
+            defaultValue="Color"
+            onChange={(e) => {
+              setFilter((prev) => ({
+                ...prev,
+                [e.target.name]: e.target.value,
+              }));
+            }}
+          >
             <Value disabled>Color</Value>
+            {colors &&
+              colors?.map((item, index) => (
+                <Value key={index} value={item.name}>
+                  {firstLetterUpperCase(item.name)}
+                </Value>
+              ))}
           </Select>
-          <Select name="size" defaultValue="Size">
+          <Select
+            name="size"
+            defaultValue="Size"
+            onChange={(e) => {
+              setFilter((prev) => ({
+                ...prev,
+                [e.target.name]: e.target.value,
+              }));
+            }}
+          >
             <Value disabled>Size</Value>
+            {sizes &&
+              sizes?.map((item, index) => (
+                <Value key={index} value={item.size}>
+                  {firstLetterUpperCase(item.size)}
+                </Value>
+              ))}
           </Select>
         </Left>
         <Right>
           <Description>Sort Products:</Description>
           <Select name="sort" defaultValue="Newest">
             <Value>Newest</Value>
+            <Value>Price ASC</Value>
+            <Value>Price DESC</Value>
           </Select>
         </Right>
       </Filters>
       <Wrapper>
-        <Products />
+        <Products filter={filter} />
       </Wrapper>
     </Container>
   );

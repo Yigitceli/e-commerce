@@ -16,8 +16,10 @@ const NavbarContainer = styled.div`
   ${middle({ padding: "5px 10px" })}
 `;
 
-const Logo = styled.span`
+const Logo = styled(Link)`
   font-weight: bolder;
+  color:black;
+  text-decoration:none;
   flex: 1;
   text-align: center;
   font-size: 30px;
@@ -119,7 +121,7 @@ export default function Navbar(props) {
             <Search style={{ fontSize: "20px", fontWeight: "100" }} />
           </SearchGroup>
         </Left>
-        <Logo>Shoplify.</Logo>
+        <Logo to="/">Shoplify.</Logo>
         <Right>
           <AuthItem nonMobile first>
             SIGN IN

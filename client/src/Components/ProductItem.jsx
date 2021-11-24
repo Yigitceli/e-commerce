@@ -5,6 +5,7 @@ import {
   SearchOutlined,
   ShoppingCartOutlined,
 } from "@material-ui/icons";
+import { Link } from "react-router-dom";
 
 const Info = styled.div`
   display: flex;
@@ -31,38 +32,19 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   flex: 1;
-
   &:hover ${Info} {
     opacity: 1;
     transition: All 0.2s linear;
   }
 `;
-const CircleContainer = styled.div`
-  position: absolute;
-  top: 0;
-  border-radius: 50%;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0.8;
-`;
-
-const Circle = styled.div`
-  background-color: white;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-`;
 
 const ProductImg = styled.img`
   height: 80%;
+  max-width:80%;
   z-index: 2;
 `;
 
-const Icon = styled.div`
+const Icon = styled(Link)`
   margin: 0 5px;
   padding: 10px;
   background-color: white;
@@ -71,6 +53,7 @@ const Icon = styled.div`
   justify-content: center;
   align-items: center;
   transition: all 0.3s linear;
+  color: #0c0c0c;
 
   &:hover {
     transform: scale(1.2);
@@ -81,18 +64,15 @@ const Icon = styled.div`
 export default function ProductItem({ data }) {
   return (
     <Wrapper>
-      <ProductImg src={data.img} />
-      <CircleContainer>
-        <Circle></Circle>
-      </CircleContainer>
+      <ProductImg src={data.image} />
       <Info>
-        <Icon>
+        <Icon to={`/product/${data.id}`}>
           <FavoriteBorderOutlined />
         </Icon>
-        <Icon>
+        <Icon to={`/product/${data.id}`}>
           <SearchOutlined />
         </Icon>
-        <Icon>
+        <Icon to={`/product/${data.id}`}>
           <ShoppingCartOutlined />
         </Icon>
       </Info>

@@ -1,9 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import { middle } from "../responsive";
+import { Link } from "react-router-dom";
 
-const Wrapper = styled.div`
+const Wrapper = styled(Link)`
   flex: 1;
+  text-decoration: none;
+  color: white;
   position: relative;
   margin: 0px 3px;
   ${middle({ margin: "3px 0" })}
@@ -46,9 +49,8 @@ const Button = styled.button`
 
 export default function CategoryItem({ data }) {
   return (
-    <Wrapper>
+    <Wrapper to={`/products?category=${data.title.toLowerCase()}`}>
       <Image src={data.img} />
-
       <ContentWrapper>
         <Title>{data.title}</Title>
         <Button>SHOP NOW</Button>
