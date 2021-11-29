@@ -4,7 +4,6 @@ const User = require("../db/Models/User");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 
-
 var transporter = nodemailer.createTransport({
   host: "smtp.mailtrap.io",
   port: 2525,
@@ -43,10 +42,11 @@ const generateAccessToken = async (user) => {
 
 const LOGIN = async (req, res, next) => {
   let { email, password } = req.body;
+  console.log(req.body);
 
   try {
     if (!email || !password) {
-      return res.json({
+      return res.status(400).json({
         msg: "Invalid Input",
         success: false,
       });
@@ -88,9 +88,9 @@ const LOGIN = async (req, res, next) => {
       {
         expiresIn: "20d",
       }
-    );    
+    );
     const accessToken = await jwt.sign(info, process.env.TOKEN_SECRET, {
-      expiresIn: "15m",
+      expiresIn: "15d",
     });
     refreshTokens.push(refreshToken);
     res.status(200).json({ ...info, accessToken, refreshToken, success: true });

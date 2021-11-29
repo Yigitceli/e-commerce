@@ -1,31 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import ProductItem from "./ProductItem";
-import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchProducts } from "../store/productsReducer";
-import { Add, Remove, Close } from "@material-ui/icons";
+import { fetchProducts, sortProducts } from "../store/productsReducer";
+import { Close } from "@material-ui/icons";
 import ReactLoading from "react-loading";
 
-function shuffle(array) {
-  let currentIndex = array.length,
-    randomIndex;
-
-  // While there remain elements to shuffle...
-  while (currentIndex != 0) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-
-  return array;
-}
 
 const Container = styled.div`
   display: flex;
@@ -47,8 +27,7 @@ const Description = styled.p`
 `;
 
 export default function Products(props) {
-  var { isLoading, isError, data } = useSelector((state) => state.products);
-  const [productsData, setProductsData] = useState(null);
+  var { isLoading, isError, data } = useSelector((state) => state.products);  
   const dispatch = useDispatch();
   const { filter, sort } = props;
 
@@ -57,28 +36,8 @@ export default function Products(props) {
   }, [filter, dispatch]);
 
   useEffect(() => {
-    setProductsData(data);
-  }, [data]);
-
-  useEffect(() => {
-    if (sort === "newest") {
-      setProductsData(data);
-    } else if (sort === "asc") {
-      setProductsData(
-        data.slice().sort((a, b) => {
-          return a.price - b.price;
-        })
-      );
-    } else if (sort === "desc") {
-      setProductsData(
-        data?.slice().sort((a, b) => {
-          return a.price + b.price;
-        })
-      );
-    }
-  }, [sort, data]);
-
-  useEffect(() => {}, [productsData]);
+    dispatch(sortProducts(sort));
+  }, [sort, data, dispatch]);
 
   return (
     <Container>
@@ -102,13 +61,13 @@ export default function Products(props) {
         <>
           {filter ? (
             <>
-              {productsData?.map((item) => (
+              {data.map((item) => (
                 <ProductItem key={item.id} data={item} />
               ))}
             </>
           ) : (
             <>
-              {productsData?.slice(0, 7)?.map((item) => (
+              {data.slice(0, 7)?.map((item) => (
                 <ProductItem key={item.id} data={item} />
               ))}
             </>

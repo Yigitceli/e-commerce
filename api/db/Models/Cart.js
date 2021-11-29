@@ -33,7 +33,7 @@ class Cart extends softDelete({ columnName: "deleted" })(Model) {
           through: {
             from: "cart_items.cart_id",
             to: "cart_items.product_id",
-            extra: ["quantity", 'color', 'size'],
+            extra: ["quantity", "color", "size"],
           },
           to: "products.id",
         },

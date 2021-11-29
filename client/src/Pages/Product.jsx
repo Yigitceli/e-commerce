@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Add, Remove, Close } from "@material-ui/icons";
 import ReactLoading from "react-loading";
@@ -149,7 +149,7 @@ export default function Product() {
   const [quantity, setQuantity] = useState(1);
   const { id } = useParams();
   const { isError, isLoading, data } = useSelector((state) => state.product);
-  
+
   const dispatch = useDispatch();
 
   const handleClick = (action) => {
@@ -195,18 +195,23 @@ export default function Product() {
                 <FilterTitle>Color</FilterTitle>
                 <Colors>
                   {data?.colors?.map((item, index) => (
-                    <>
+                    <Fragment key={index}>
                       <Color name="color" type="radio" id={`color${index}`} />
-                      <Label bg={`${item.name}`} for={`color${index}`}></Label>
-                    </>
+                      <Label
+                        bg={`${item.name}`}
+                        htmlFor={`color${index}`}
+                      ></Label>
+                    </Fragment>
                   ))}
                 </Colors>
               </ColorWrapper>
               <SizeWrapper>
                 <FilterTitle>Size</FilterTitle>
                 <Select Value="XS">
-                  {data?.sizes?.map((item) => (
-                    <Option>{item.size}</Option>
+                  {data?.sizes?.map((item, index) => (
+                    <Fragment key={index}>
+                      <Option>{item.size}</Option>
+                    </Fragment>
                   ))}
                 </Select>
               </SizeWrapper>

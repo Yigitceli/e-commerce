@@ -4,7 +4,6 @@ import axios from "../axios";
 export const fetchProducts = createAsyncThunk(
   "fetchProducts",
   async (filter = null, thunkAPI) => {
-    console.log(filter);
     if (filter) {
       var { data } = await axios.get(
         `product?category=${filter.category}` +
@@ -28,7 +27,29 @@ const initialState = {
 export const ProductsSlicer = createSlice({
   name: "products",
   initialState,
-  reducers: {},
+  reducers: {
+    sortProducts: (state, action) => {
+      switch (action.payload) {
+        case "newest":
+          state.data = state.data?.sort((a, b) => {
+            return new Date(a.created_at) - new Date(b.created_at);
+          });
+          break;
+        case "asc":
+          state.data = state.data?.sort((a, b) => {
+            return a.price - b.price;
+          });
+          break;
+        case "desc":
+          state.data = state.data?.sort((a, b) => {
+            return b.price - a.price;
+          });
+          break;
+        default:
+          break;
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchProducts.pending, (state, action) => {
       state.isLoading = true;
@@ -49,5 +70,7 @@ export const ProductsSlicer = createSlice({
 });
 
 // Action creators are generated for each case reducer function
+
+export const { sortProducts } = ProductsSlicer.actions;
 
 export default ProductsSlicer.reducer;

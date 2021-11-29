@@ -29,13 +29,38 @@ const CREATE_CART = async (req, res, next) => {
 /******************* ADD_ITEM SECTION STARTS ****************/
 
 const ADD_ITEM = async (req, res, next) => {
-  const { quantity, item, color, size } = req.body;
+  const { quantity, color, size } = req.body;
+  const user = req.user;
   const { id } = req.params;
   try {
     try {
-      await Cart.relatedQuery("cart_items")
-        .for(id)
-        .relate({ id: item, quantity: quantity, color, size });
+      var cart = await User.relatedQuery("carts")
+        .for(user.id)
+        .select("*")
+        .where({ deleted: false })
+        .first();
+      if (!cart) {
+        cart = await User.relatedQuery("carts").for(user.id).insertAndFetch({});
+      }
+
+      const product = await Cart.relatedQuery("cart_items")
+        .for(cart.id)
+        .select("*")
+        .where({ color, size, product_id: id })
+        .first();
+
+      if (product) {
+        await Cart.relatedQuery("cart_items")
+          .for(cart.id)
+          .patch({ quantity: req.body.quantity })
+          .whereA({ color })
+          .where({ size })
+          .where({ product_id: id });
+      } else {
+        await Cart.relatedQuery("cart_items")
+          .for(cart.id)
+          .relate({ id, quantity, color, size });
+      }
     } catch (error) {
       return res.status(406).json({ msg: "Invalid Inputs", success: false });
     }
@@ -70,7 +95,7 @@ const DELETE_ITEM = async (req, res, next) => {
           success: true,
         })
       : res.status(404).json({
-          msg: "Item not found",          
+          msg: "Item not found",
           success: false,
         });
   } catch (error) {
