@@ -7,6 +7,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProduct } from "../store/productReducer";
+import { addItem } from "../store/cartReducer";
 
 const Container = styled.div`
   display: flex;
@@ -149,6 +150,8 @@ export default function Product() {
   const [quantity, setQuantity] = useState(1);
   const { id } = useParams();
   const { isError, isLoading, data } = useSelector((state) => state.product);
+  const [color, setColor] = useState(null);
+  const [size, setSize] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -160,6 +163,19 @@ export default function Product() {
   useEffect(() => {
     dispatch(fetchProduct(id));
   }, [id, dispatch]);
+
+  useEffect(() => {
+    setColor(data.colors && data.colors[0].id);
+    setSize(data.sizes && data.sizes[0].id);
+  }, [data]);
+
+  useEffect(() => {
+    console.log(color + " " + size);
+  }, [color, size]);
+
+  const addCart = (data) => {
+    dispatch(addItem(data));
+  };
 
   return (
     <Container>
@@ -193,10 +209,15 @@ export default function Product() {
             <FilterContainer>
               <ColorWrapper>
                 <FilterTitle>Color</FilterTitle>
-                <Colors>
+                <Colors onChange={(e) => setColor(e.target.value)}>
                   {data?.colors?.map((item, index) => (
                     <Fragment key={index}>
-                      <Color name="color" type="radio" id={`color${index}`} />
+                      <Color
+                        value={item.id}
+                        name="color"
+                        type="radio"
+                        id={`color${index}`}
+                      />
                       <Label
                         bg={`${item.name}`}
                         htmlFor={`color${index}`}
@@ -207,10 +228,15 @@ export default function Product() {
               </ColorWrapper>
               <SizeWrapper>
                 <FilterTitle>Size</FilterTitle>
-                <Select Value="XS">
+                <Select
+                  Value="XS"
+                  onChange={(e) => {
+                    setSize(e.target.value);
+                  }}
+                >
                   {data?.sizes?.map((item, index) => (
                     <Fragment key={index}>
-                      <Option>{item.size}</Option>
+                      <Option value={item.id}>{item.size}</Option>
                     </Fragment>
                   ))}
                 </Select>

@@ -3,10 +3,6 @@ const Cart = require("../db/Models/Cart");
 const CartItem = require("../db/Models/Cart_items");
 const User = require("../db/Models/User");
 
-
-
-
-
 /******************* ADD_ITEM SECTION STARTS ****************/
 
 const ADD_ITEM = async (req, res, next) => {
@@ -106,4 +102,28 @@ const DELETE_CART = async (req, res, next) => {
 
 /******************* UPDATE_ITEM SECTION STARTS ****************/
 
-module.exports = { ADD_ITEM, DELETE_ITEM, DELETE_CART };
+const UPDATE_ITEM = async (req, res, next) => {
+  const { id } = req.params;
+  const { quantity, color, size } = req.body;
+  const user = req.user;
+  try {
+    var cart = await User.relatedQuery("carts")
+      .for(user.id)
+      .select("*")
+      .where({ deleted: false })
+      .first();
+
+    try {
+      var product = await CartItem.query()
+        .patch({ quantity })
+        .where({ color, size, product_id: id, cart_id: cart.id });
+    } catch (error) {
+      return res.status(406).json({ msg: "Invalid Inputs.", success: false });
+    }
+    return res.json({ msg: "Item Updated!", success: true, paylod: product });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+module.exports = { UPDATE_ITEM, ADD_ITEM, DELETE_ITEM, DELETE_CART };
