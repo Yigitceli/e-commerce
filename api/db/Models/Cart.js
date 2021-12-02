@@ -1,6 +1,8 @@
 const { Model } = require("objection");
 const Knex = require("../db");
 const softDelete = require("objection-soft-delete");
+const Color = require("./Color");
+const Size = require("./Size");
 
 Model.knex(Knex);
 
@@ -36,6 +38,31 @@ class Cart extends softDelete({ columnName: "deleted" })(Model) {
             extra: ["quantity", "color", "size"],
           },
           to: "products.id",
+        },
+      },
+
+      item_color: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Color,
+        join: {
+          from: "carts.id",
+          through: {
+            from: "cart_items.cart_id",
+            to: "cart_items.color",
+          },
+          to: "colors.id",
+        },
+      },
+      item_size: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Size,
+        join: {
+          from: "carts.id",
+          through: {
+            from: "cart_items.cart_id",
+            to: "cart_items.size",
+          },
+          to: "sizes.id",
         },
       },
     };

@@ -1,30 +1,11 @@
 const { id } = require("../db/Models/Cart");
 const Cart = require("../db/Models/Cart");
+const CartItem = require("../db/Models/Cart_items");
 const User = require("../db/Models/User");
 
-/******************* CREATE_CART SECTION STARTS ****************/
 
-const CREATE_CART = async (req, res, next) => {
-  const user = req.user;
-  try {
-    try {
-      var cart = await User.relatedQuery("carts")
-        .for(user.id)
-        .select("*")
-        .where({ deleted: false })
-        .first();
-      if (!cart) {
-        cart = await User.relatedQuery("carts").for(user.id).insertAndFetch({});
-      }
-    } catch (error) {
-      return res.status(406).json({ msg: "Invalid Inputs", success: false });
-    }
 
-    res.json({ msg: "Cart Created", payload: cart, success: false });
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+
 
 /******************* ADD_ITEM SECTION STARTS ****************/
 
@@ -50,12 +31,10 @@ const ADD_ITEM = async (req, res, next) => {
         .first();
 
       if (product) {
-        await Cart.relatedQuery("cart_items")
-          .for(cart.id)
-          .patch({ quantity: req.body.quantity })
-          .whereA({ color })
-          .where({ size })
-          .where({ product_id: id });
+        const quantityToAdd = quantity;
+        await CartItem.query()
+          .update({ quantity: product.quantity + quantity })
+          .where({ cart_id: cart.id, color, size, product_id: id });
       } else {
         await Cart.relatedQuery("cart_items")
           .for(cart.id)
@@ -125,4 +104,6 @@ const DELETE_CART = async (req, res, next) => {
   }
 };
 
-module.exports = { CREATE_CART, ADD_ITEM, DELETE_ITEM, DELETE_CART };
+/******************* UPDATE_ITEM SECTION STARTS ****************/
+
+module.exports = { ADD_ITEM, DELETE_ITEM, DELETE_CART };
