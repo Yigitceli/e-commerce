@@ -55,7 +55,7 @@ class Product extends Model {
         relation: Model.ManyToManyRelation,
         modelClass: Cart,
         join: {
-          from: "products.id",          
+          from: "products.id",
           through: {
             from: "cart_items.product_id",
             to: "cart_items.cart_id",
@@ -64,7 +64,32 @@ class Product extends Model {
           to: "carts.id",
         },
       },
+      cart_color: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Color,
+        join: {
+          from: "products.id",
+          through: {
+            from: "cart_items.product_id",
+            to: "cart_items.color",
+          },
+          to: "colors.id",
+        },
+      },
+      cart_size: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Size,
+        join: {
+          from: "products.id",
+          through: {
+            from: "cart_items.product_id",
+            to: "cart_items.size",
+          },
+          to: "sizes.id",
+        },
+      },
     };
   }
 }
 module.exports = Product;
+/**/

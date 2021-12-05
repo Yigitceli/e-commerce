@@ -1,5 +1,6 @@
 exports.up = function (knex) {
   return knex.schema.createTable("cart_items", function (table) {
+    table.increments("id");
     table
       .integer("cart_id")
       .references("id")

@@ -81,10 +81,12 @@ const DELETE_ITEM = async (req, res, next) => {
 /******************* DELETE_CART SECTION STARTS ****************/
 
 const DELETE_CART = async (req, res, next) => {
-  const { id } = req.params;
+  const user = req.user;
   try {
     try {
-      var cart = await Cart.query().delete().where({ id });
+      var cart = await Cart.query()
+        .delete()
+        .where({ user_id: user.id, deleted: false });
     } catch (error) {
       return res.status(406).json({ msg: "Invalid Inputs", success: false });
     }
@@ -126,4 +128,40 @@ const UPDATE_ITEM = async (req, res, next) => {
   }
 };
 
-module.exports = { UPDATE_ITEM, ADD_ITEM, DELETE_ITEM, DELETE_CART };
+/******************* GET_ITEMS SECTION STARTS ***********/
+
+const GET_ITEMS = async (req, res, next) => {
+  const user = req.user;
+  try {
+    const cart = await User.relatedQuery("carts")
+      .for(user.id)
+      .select("*")
+      .where({ deleted: false })
+      .first();
+
+    try {
+      if (cart) {
+        var items = await CartItem.query()
+          .withGraphFetched("[cart,product,cart_color, cart_size]")
+          .where({ cart_id: cart.id })
+          .select("*");
+        if (items.length <= 0) {
+          return res
+            .status(406)
+            .json({ msg: "Cart is empty.", success: false });
+        }
+      } else {
+        return res.status(406).json({ msg: "Cart is empty.", success: false });
+      }
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ msg: "Something went wrong.", success: false });
+    }
+    return res.json({ msg: "Items Sent!", success: true, paylod: items });
+  } catch (error) {
+    res.status(500).json({ msg: "Something went wrong.", success: false });
+  }
+};
+
+module.exports = { GET_ITEMS, UPDATE_ITEM, ADD_ITEM, DELETE_ITEM, DELETE_CART };

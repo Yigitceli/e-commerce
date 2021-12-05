@@ -40,8 +40,7 @@ class Cart extends softDelete({ columnName: "deleted" })(Model) {
           to: "products.id",
         },
       },
-
-      item_color: {
+      cart_color: {
         relation: Model.ManyToManyRelation,
         modelClass: Color,
         join: {
@@ -53,7 +52,7 @@ class Cart extends softDelete({ columnName: "deleted" })(Model) {
           to: "colors.id",
         },
       },
-      item_size: {
+      cart_size: {
         relation: Model.ManyToManyRelation,
         modelClass: Size,
         join: {
@@ -70,3 +69,5 @@ class Cart extends softDelete({ columnName: "deleted" })(Model) {
 }
 
 module.exports = Cart;
+
+/* */

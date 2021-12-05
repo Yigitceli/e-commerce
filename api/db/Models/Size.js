@@ -19,7 +19,48 @@ class Size extends Model {
     };
   }
   static get relationMappings() {
-    return {};
+    const Cart = require("./Cart");
+    const Color = require("./Color");
+    const Product = require("./Product");
+
+    return {
+      cart_size: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Product,
+        join: {
+          from: "sizes.id",
+          through: {
+            from: "cart_items.size",
+            to: "cart_items.product_id",
+          },
+          to: "products.id",
+        },
+      },
+      cart_items: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Cart,
+        join: {
+          from: "sizes.id",
+          through: {
+            from: "cart_items.cart_id",
+            to: "cart_items.size",
+          },
+          to: "carts.id",
+        },
+      },
+      cart_color: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Color,
+        join: {
+          from: "sizes.id",
+          through: {
+            from: "cart_items.size",
+            to: "cart_items.color",
+          },
+          to: "colors.id",
+        },
+      },
+    };
   }
 }
 module.exports = Size;
