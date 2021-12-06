@@ -41,7 +41,7 @@ const generateAccessToken = async (user) => {
 /******************* LOGIN SECTION STARTS ****************/
 
 const LOGIN = async (req, res, next) => {
-  let { email, password } = req.body;
+  let { email, password } = req.body.data;
   console.log(req.body);
 
   try {
@@ -93,7 +93,11 @@ const LOGIN = async (req, res, next) => {
       expiresIn: "15d",
     });
     refreshTokens.push(refreshToken);
-    res.status(200).json({ ...info, accessToken, refreshToken, success: true });
+    res.status(200).json({
+      payload: { ...info, accessToken, refreshToken },
+      success: true,
+      msg: "Logged In!",
+    });
   } catch (error) {
     next(error);
   }
@@ -154,8 +158,10 @@ const TOKEN = async (req, res, next) => {
 
 const REGISTER = async (req, res, next) => {
   try {
-    let { first_name, last_name, email, password } = req.body;
-    email = email.toLowerCase();
+    let { first_name, last_name, email, password, password_verify } =
+      req.body.data;
+    email = email?.toLowerCase();
+
     let errors = [];
 
     (!first_name || !last_name || !email || !password) &&
@@ -167,6 +173,8 @@ const REGISTER = async (req, res, next) => {
         : null;
 
     user && errors.push("Email is already taken!");
+
+    password != password_verify && errors.push("Passwords do not match!");
 
     email && !validateEmail(email) && errors.push("Invalid Email input!");
 
@@ -196,11 +204,11 @@ const REGISTER = async (req, res, next) => {
         info && console.log(info);
       });
 
-      res
+      return res
         .status(200)
         .json({ msg: "Verification email has been sent!", success: true });
     } else {
-      res.status(406).json({ msg: errors, success: false });
+      return res.status(406).json({ msg: errors, success: false });
     }
   } catch (error) {
     res.sendStatus(500);

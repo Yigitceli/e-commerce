@@ -98,7 +98,7 @@ export default function ProductList() {
               }));
             }}
           >
-            <Value disabled>Color</Value>
+            <Value value={null} disabled>Color</Value>
             {colors &&
               colors?.map((item, index) => (
                 <Value key={index} value={item.name}>
@@ -116,7 +116,7 @@ export default function ProductList() {
               }));
             }}
           >
-            <Value disabled>Size</Value>
+            <Value value={null} disabled>Size</Value>
             {sizes &&
               sizes?.map((item, index) => (
                 <Value key={index} value={item.size}>

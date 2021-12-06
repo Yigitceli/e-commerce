@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { userLogin } from "../store/userReducer";
 
 const Container = styled.div`
   display: flex;
@@ -46,13 +48,39 @@ const Button = styled.button`
 `;
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { error } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    dispatch(userLogin({ email, password }));
+    if (!error) {
+      setEmail("");
+      setPassword("");
+      navigate("/");
+    }
+  };
   return (
     <Container>
-      <LoginForm>
+      <LoginForm onSubmit={submitHandler}>
         <Title>SIGN IN</Title>
-        <Input placeholder="Username" type="text" />
-        <Input placeholder="Password" type="password" />
-        <Button>Sign In</Button>
+        <Input
+          placeholder="Email"
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Input
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        {error && <p>{error}</p>}
+        <Button type="submit">Sign In</Button>
         <Link style={{ fontSize: "12px", marginBottom: "10px" }} to="#">
           DO NOT YOU REMEMBER THE PASSWORD?
         </Link>

@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useNavigate,
+} from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { userRegister } from "../store/userReducer";
+import { Snackbar } from "@material-ui/core";
 
 const Container = styled.div`
   display: flex;
@@ -58,24 +67,76 @@ const Policy = styled.p`
 `;
 
 export default function Register() {
+  const [first_name, setName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [password_verify, setPasswordVerify] = useState("");
+
+  const dispatch = useDispatch();
+  const { error, notifications } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    dispatch(
+      userRegister({ first_name, last_name, email, password, password_verify })
+    );
+    if (!error) {
+      setName("");
+      setLastName("");
+      setEmail("");
+      setPasswordVerify("");
+      setPassword("");
+      navigate("/");
+    }
+  };
+
   return (
     <Container>
-      <LoginForm>
+      <LoginForm onSubmit={submitHandler}>
         <Title>Create An Account</Title>
         <InputGroup>
-          <Input placeholder="Name" type="text" />
-          <Input placeholder="Last name" type="text" />
-          <Input placeholder="Email" type="text" />
-          <Input placeholder="Username" type="text" />
-          <Input placeholder="Password" type="password" />
-          <Input placeholder="Password Verify" type="password" />
+          <Input
+            placeholder="Name"
+            type="text"
+            onChange={(e) => setName(e.target.value)}
+            value={first_name}
+          />
+          <Input
+            placeholder="Last name"
+            type="text"
+            onChange={(e) => setLastName(e.target.value)}
+            value={last_name?.trim()}
+          />
+          <Input
+            placeholder="Email"
+            type="text"
+            onChange={(e) => setEmail(e.target.value)}
+            value={email?.trim()}
+            style={{ minWidth: "80%" }}
+          />
+          <Input
+            placeholder="Password"
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password?.trim()}
+          />
+          <Input
+            placeholder="Password Verify"
+            type="password"
+            onChange={(e) => setPasswordVerify(e.target.value)}
+            value={password_verify?.trim()}
+          />
         </InputGroup>
 
         <Policy>
           By creating an account, I consent to the processing of my personal
           data in accordance with the <strong>PRIVACY POLICY</strong>
         </Policy>
-        <Button>Sign Up</Button>
+        <Button type="submit">Sign Up</Button>
+        {error && error.map((item) => <p>{item}</p>)}
+        
         <Link style={{ fontSize: "12px", marginBottom: "10px" }} to="#">
           DO NOT YOU REMEMBER THE PASSWORD?
         </Link>
@@ -83,6 +144,7 @@ export default function Register() {
           DO YOU HAVE AN ACCOUNT?
         </Link>
       </LoginForm>
+      
     </Container>
   );
 }

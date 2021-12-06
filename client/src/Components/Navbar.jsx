@@ -8,6 +8,8 @@ import {
 import { Badge } from "@material-ui/core";
 import { middle } from "../responsive";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/userReducer";
 
 const NavbarContainer = styled.div`
   display: flex;
@@ -58,7 +60,9 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const AuthItem = styled.span`
+const AuthItem = styled(Link)`
+  color: black;
+  text-decoration: none;
   display: ${(props) => props.Mobile && "none"};
   font-size: 14px;
   margin-left: ${(props) => (props.first ? "0px" : "30px")};
@@ -93,6 +97,8 @@ const MenuItem = styled.div`
 
 export default function Navbar(props) {
   const [open, setOpen] = useState(false);
+  const { data } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   return (
     <Container>
@@ -101,9 +107,19 @@ export default function Navbar(props) {
           <Logo to="/">Shoplify.</Logo>
         </Left>
         <Right>
-          <AuthItem first>SIGN IN</AuthItem>
-          <AuthItem>REGISTER</AuthItem>
-          <AuthItem>
+          {data ? (
+            <AuthItem to="/" onClick={() => dispatch(logout())}>
+              LOG OUT
+            </AuthItem>
+          ) : (
+            <>
+              <AuthItem to="/login" first>
+                SIGN IN
+              </AuthItem>
+              <AuthItem to="/register">REGISTER</AuthItem>
+            </>
+          )}
+          <AuthItem to="/cart">
             <Badge badgeContent={4} color="secondary">
               <ShoppingCart style={{ color: "tomato" }} />
             </Badge>
